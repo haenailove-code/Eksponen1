@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exponent Concept Explorer - Alat Peraga Interaktif Eksponen</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX CSS & JS for Precision Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .font-mono-math {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Tab Active State Styling */
+        .tab-btn.active {
+            background-color: #4f46e5;
+            color: #ffffff;
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.35);
+        }
+
+        /* Paper Card Styling */
+        .paper-card {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            position: relative;
+            background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+            background-size: 10px 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .paper-card:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.15);
+        }
+
+        /* Torn Edge CSS Clip Path Effect */
+        .torn-edge {
+            clip-path: polygon(
+                0% 0%, 100% 0%, 
+                100% 92%, 95% 98%, 90% 93%, 85% 97%, 80% 92%, 75% 98%, 70% 93%, 65% 97%, 
+                60% 92%, 55% 98%, 50% 93%, 45% 97%, 40% 92%, 35% 98%, 30% 93%, 25% 97%, 
+                20% 92%, 15% 98%, 10% 93%, 5% 97%, 0% 92%
+            );
+        }
+
+        /* Directional Tearing Paper Keyframe Animations */
+        @keyframes tearPopUp {
+            0% { transform: scale(0.4) translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
+            50% { transform: scale(1.1) translate(calc(var(--tx) * 1.2), calc(var(--ty) * 1.2)) rotate(calc(var(--rot) * 1.5)); opacity: 0.9; }
+            100% { transform: scale(1) translate(0, 0) rotate(0deg); opacity: 1; }
+        }
+
+        /* Split Rip Flash Animation for Paper Stage */
+        @keyframes paperRipSplit {
+            0% { transform: scale(1); filter: brightness(1); }
+            30% { transform: scale(0.96) rotate(-1.5deg); filter: brightness(1.2); }
+            60% { transform: scale(1.03) rotate(1.5deg); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        .anim-paper-split {
+            animation: paperRipSplit 0.4s ease-in-out;
+        }
+
+        .anim-paper-pop {
+            animation: tearPopUp 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Floating Paper Debris Particles */
+        @keyframes particleFly {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0); opacity: 0; }
+        }
+
+        .paper-debris {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background-color: #f1f5f9;
+            border: 1px solid #94a3b8;
+            pointer-events: none;
+            z-index: 30;
+            border-radius: 1px;
+            animation: particleFly 0.55s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        /* Division Strike-through style for fraction cancellation */
+        .cancel-item {
+            position: relative;
+        }
+        .cancel-item::after {
+            content: '';
+            position: absolute;
+            left: -15%;
+            top: 50%;
+            width: 130%;
+            height: 3px;
+            background-color: #ef4444;
+            transform: rotate(-30deg);
+            border-radius: 2px;
+        }
+
+        /* ===== HOME LEARNING THEME ===== */
+        body {
+            background:
+                radial-gradient(circle at 8% 12%, rgba(251, 207, 232, .55) 0 90px, transparent 91px),
+                radial-gradient(circle at 92% 18%, rgba(254, 215, 170, .55) 0 110px, transparent 111px),
+                linear-gradient(180deg, #fffaf5 0%, #fdf7ff 48%, #f7fbff 100%);
+        }
+        body::before {
+            content: "⌂";
+            position: fixed;
+            right: 18px;
+            bottom: 12px;
+            font-size: 110px;
+            line-height: 1;
+            color: rgba(236, 72, 153, .07);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .home-card {
+            background: rgba(255,255,255,.92) !important;
+            border-color: #f1d9e8 !important;
+            box-shadow: 0 10px 28px rgba(148, 82, 125, .09) !important;
+        }
+        .home-stage {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.95), rgba(255,246,250,.92)),
+                repeating-linear-gradient(0deg, transparent 0 24px, rgba(244,114,182,.055) 25px);
+            border-color: #e9b8d1 !important;
+        }
+        .real-paper {
+            position: relative;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.98), rgba(255,250,238,.98));
+            border: 1px solid #d9c7ad;
+            box-shadow: 0 7px 13px rgba(94, 67, 45, .16), inset 0 0 0 1px rgba(255,255,255,.75);
+            overflow: hidden;
+        }
+        .real-paper::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1px dashed rgba(180, 151, 116, .35);
+            pointer-events: none;
+        }
+        .real-paper .paper-fold {
+            position:absolute;
+            left: 50%;
+            top: 9%;
+            bottom: 9%;
+            width: 2px;
+            transform: translateX(-50%);
+            background: repeating-linear-gradient(to bottom, #d1b896 0 7px, transparent 7px 13px);
+            opacity: .75;
+        }
+        .real-paper .paper-label {
+            position:absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            background: rgba(255,255,255,.85);
+            border: 1px solid #eadcc9;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #7c5a3b;
+            white-space: nowrap;
+        }
+        .tear-result {
+            position: relative;
+            display: grid;
+            gap: 5px;
+            width: min(100%, 560px);
+            justify-items: center;
+        }
+        .tear-result .piece {
+            position: relative;
+            min-width: 42px;
+            min-height: 52px;
+            background: linear-gradient(145deg, #fffefb, #fff7e8);
+            border: 1px solid #d9c7ad;
+            box-shadow: 0 4px 8px rgba(94,67,45,.13);
+            padding: 7px 5px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-direction:column;
+            overflow:hidden;
+        }
+        .tear-result .piece::after {
+            content:"";
+            position:absolute;
+            left:-3px; right:-3px; top:-3px;
+            height:7px;
+            background: #fffaf0;
+            clip-path: polygon(0 45%,8% 5%,16% 55%,25% 15%,34% 60%,44% 8%,54% 52%,64% 12%,74% 58%,84% 7%,92% 48%,100% 15%,100% 100%,0 100%);
+            border-bottom: 1px solid #d9c7ad;
+        }
+        .piece.tiny { min-width: 31px; min-height: 38px; padding: 4px 2px; }
+        .piece.tiny .piece-number { font-size: 8px; }
+        .piece-number { font-size: 10px; font-weight: 900; color:#5b3d2a; margin-top: 5px; }
+        .piece-basis { font-size: 8px; color:#a17852; font-weight: 800; }
+        .split-arrow {
+            display:flex; align-items:center; justify-content:center; gap:7px;
+            color:#d977a8; font-weight:900; font-size:12px;
+        }
+        .split-arrow .arrow-line {
+            width: 52px; height: 2px; background:#e8a7c7; position:relative;
+        }
+        .split-arrow .arrow-line::after {
+            content:""; position:absolute; right:-1px; top:-4px;
+            border-left:8px solid #e8a7c7; border-top:5px solid transparent; border-bottom:5px solid transparent;
+        }
+        .home-sticker {
+            display:inline-flex; align-items:center; gap:5px;
+            background:#fff0f7; color:#be4b83; border:1px solid #f3c5db;
+            border-radius:999px; padding:5px 10px; font-size:10px; font-weight:900;
+        }
+        .clear-ladder-row {
+            min-height: 74px !important;
+            padding: 12px 14px !important;
+            font-size: 13px !important;
+        }
+        .ladder-exp {
+            min-width: 92px !important;
+            font-size: 19px !important;
+            text-align:center;
+        }
+        .ladder-value {
+            min-width: 145px;
+            text-align:center;
+            font-size: 15px;
+            font-weight: 800;
+            color:#334155;
+        }
+        .ladder-step {
+            min-width: 190px;
+            text-align:right;
+            font-size:12px;
+            line-height:1.35;
+            color:#64748b;
+        }
+        .zero-highlight {
+            background: linear-gradient(90deg,#fff4cc,#fffaf0) !important;
+            border: 2px solid #f2c14e !important;
+        }
+        .negative-highlight {
+            background: linear-gradient(90deg,#f4efff,#fbf9ff) !important;
+            border-color:#c9b5ef !important;
+        }
+        .home-callout {
+            background: linear-gradient(135deg,#fff3f8,#fff9e9);
+            border:1px solid #f0c9dc;
+            border-radius:18px;
+            padding:14px 16px;
+            color:#5f4660;
+        }
+        @media (max-width: 640px) {
+            .ladder-step { min-width: 115px; font-size:10px; }
+            .ladder-value { min-width: 90px; font-size:13px; }
+            .ladder-exp { min-width: 60px !important; }
+        }
+
+    
+        /* ===== PASTEL YELLOW + BLUE THEME ===== */
+        body {
+            background:
+                radial-gradient(circle at 8% 10%, rgba(253, 230, 138, .42) 0 100px, transparent 101px),
+                radial-gradient(circle at 92% 18%, rgba(147, 197, 253, .38) 0 120px, transparent 121px),
+                linear-gradient(180deg, #fffdf4 0%, #f5fbff 52%, #fffaf0 100%);
+        }
+        body::before { color: rgba(59,130,246,.06); }
+        .home-card { border-color:#dbeafe !important; box-shadow:0 10px 28px rgba(59,130,246,.08) !important; }
+        .home-stage {
+            background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(239,248,255,.96)),
+                        repeating-linear-gradient(0deg, transparent 0 24px, rgba(250,204,21,.055) 25px);
+            border-color:#93c5fd !important;
+        }
+        .home-sticker { background:#fff7c2; color:#315b83; border-color:#bfdbfe; }
+        .home-callout { background:linear-gradient(135deg,#eff8ff,#fff9cf); border-color:#bfdbfe; color:#31506d; }
+        .real-paper { background:linear-gradient(135deg,#fffef8,#fffdf1); border-color:#cbd5e1; }
+        .tear-result .piece { background:linear-gradient(145deg,#fffefb,#fef9df); border-color:#cbd5e1; }
+        .tab-btn.active { background:#7db7e8 !important; color:#163b5c !important; box-shadow:0 4px 14px rgba(59,130,246,.22) !important; }
+        .tear-base-btn.bg-indigo-600 { background:#7db7e8 !important; border-color:#5d9dce !important; color:#173f5f !important; }
+        .tear-base-btn.bg-slate-100 { background:#fff7c2 !important; border-color:#e7c95d !important; color:#5e521f !important; }
+        .text-indigo-600 { color:#3f7098 !important; }
+        .bg-indigo-50 { background:#edf7ff !important; }
+        .border-indigo-100, .border-indigo-200, .border-indigo-400\/40 { border-color:#bfdbfe !important; }
+        .bg-indigo-100 { background:#eaf5ff !important; }
+        .text-indigo-800 { color:#315b83 !important; }
+        .bg-amber-500 { background:#f2d36b !important; }
+        .hover\:bg-amber-600:hover { background:#e5c353 !important; }
+        .text-amber-950 { color:#66531b !important; }
+        .bg-amber-50 { background:#fff9d9 !important; }
+        .border-amber-200 { border-color:#efd477 !important; }
+        .text-amber-800 { color:#79621a !important; }
+
+        .pastel-explain-card { display:flex; gap:14px; align-items:flex-start; padding:18px; border-radius:22px; border:1.5px solid #bfdbfe; box-shadow:0 8px 20px rgba(59,130,246,.07); }
+        .zero-explain { background:linear-gradient(135deg,#fff8c9,#fffdf0); border-color:#f3d36a; }
+        .negative-explain { background:linear-gradient(135deg,#eaf5ff,#f8fcff); }
+        .explain-icon { width:42px; height:42px; flex:none; display:flex; align-items:center; justify-content:center; border-radius:14px; background:#bfdbfe; color:#24557c; font-size:18px; }
+        .zero-explain .explain-icon { background:#fde68a; color:#8a6510; }
+        .formula-chip { margin-top:10px; display:inline-flex; padding:8px 12px; border-radius:12px; background:rgba(255,255,255,.8); border:1px dashed #93c5fd; font-weight:800; }
+        .zero-explain .formula-chip { border-color:#eabf35; }
+
+        /* ===== REAL PAPER TEAR ===== */
+        .tear-demo { position:relative; width:210px; height:150px; margin:2px auto; }
+        .tear-demo-sheet { position:absolute; inset:0; background:linear-gradient(135deg,#fffefb,#fff9e7); border:1px solid #cbd5e1; border-radius:5px; box-shadow:0 10px 20px rgba(51,65,85,.16); overflow:hidden; }
+        .tear-demo-sheet::before { content:""; position:absolute; inset:9px; border:1px dashed rgba(148,163,184,.34); border-radius:2px; }
+        .tear-seam { position:absolute; top:4%; bottom:4%; width:3px; transform:translateX(-50%); background:repeating-linear-gradient(to bottom,#94a3b8 0 5px,transparent 5px 10px); opacity:.75; z-index:4; }
+        .tear-demo-split { position:absolute; inset:0; display:flex; z-index:3; opacity:0; }
+        .tear-demo-split .tear-half { height:100%; background:linear-gradient(135deg,#fffefb,#fff9e7); border:1px solid #cbd5e1; box-shadow:0 7px 15px rgba(51,65,85,.14); margin-right:1px; }
+        .tear-anim .tear-demo-sheet { animation:sheetFadeOut .65s ease forwards; }
+        .tear-anim .tear-demo-split { animation:piecesAppear .75s .18s ease-out forwards; }
+        .tear-anim .tear-seam { animation:seamSoft .65s ease forwards; }
+        @keyframes sheetFadeOut { 0%{opacity:1; transform:scale(1)} 70%{opacity:.55; transform:scale(.985)} 100%{opacity:0; transform:scale(.98)} }
+        @keyframes piecesAppear { 0%{opacity:0; transform:scale(.98)} 100%{opacity:1; transform:scale(1)} }
+        @keyframes seamSoft { 0%{opacity:.25; transform:translateX(-50%) scaleY(.4)} 70%{opacity:1; transform:translateX(-50%) scaleY(1)} 100%{opacity:0} }
+        .tear-piece-grid { display:grid; gap:7px; width:min(100%,560px); justify-items:center; align-items:center; }
+        .tear-piece-grid .torn-piece { position:relative; min-width:46px; min-height:60px; background:linear-gradient(145deg,#fffefb,#fff9df); border:1px solid #cbd5e1; box-shadow:0 5px 10px rgba(51,65,85,.13); border-radius:3px; }
+        .tear-piece-grid .torn-piece::before { content:""; position:absolute; top:-4px; left:-2px; right:-2px; height:8px; background:#fffefb; clip-path:polygon(0 55%,8% 10%,16% 65%,25% 18%,35% 62%,45% 8%,55% 60%,65% 16%,75% 66%,85% 12%,94% 55%,100% 25%,100% 100%,0 100%); }
+        .tear-piece-grid .torn-piece::after { content:""; position:absolute; bottom:-4px; left:-2px; right:-2px; height:8px; background:#fff9df; clip-path:polygon(0 0,100% 0,100% 65%,92% 90%,82% 35%,72% 82%,61% 30%,50% 88%,39% 38%,29% 84%,18% 32%,8% 92%,0 60%); }
+        .tear-piece-grid .torn-piece { animation:pieceSettle .55s ease-out both; }
+        @keyframes pieceSettle { from{opacity:0; transform:translateY(8px) scale(.97)} to{opacity:1; transform:none} }
+        .tear-step-label { font-size:11px; font-weight:800; color:#41617d; text-align:center; }
+        .tear-arrow-soft { display:flex; align-items:center; gap:8px; color:#47759c; font-size:12px; font-weight:900; }
+        .tear-arrow-soft .line { width:55px; height:2px; background:#93c5fd; position:relative; }
+        .tear-arrow-soft .line::after { content:""; position:absolute; right:-1px; top:-4px; border-left:8px solid #93c5fd; border-top:5px solid transparent; border-bottom:5px solid transparent; }
+        .tear-instruction { background:#fff9d9; border:1px solid #f4d675; color:#725817; border-radius:14px; padding:8px 12px; font-size:11px; font-weight:800; text-align:center; }
+
+
+        /* ================================================================
+           FINAL ACCESSIBILITY + PASTEL YELLOW THEME OVERRIDES
+           Kuning pastel = warna utama, biru pastel = aksen.
+           Semua teks penting dibuat cukup gelap agar terbaca.
+        ================================================================= */
+        :root {
+            --pastel-yellow: #F8D96B;
+            --pastel-yellow-light: #FFF4BF;
+            --pastel-yellow-soft: #FFF9DE;
+            --pastel-blue: #9FD3F5;
+            --pastel-blue-light: #EAF6FF;
+            --ink: #263238;
+            --ink-soft: #40515C;
+            --yellow-dark: #765900;
+            --blue-dark: #24577A;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 7% 9%, rgba(248,217,107,.48) 0 105px, transparent 106px),
+                radial-gradient(circle at 94% 16%, rgba(159,211,245,.35) 0 120px, transparent 121px),
+                linear-gradient(180deg, #FFFDF3 0%, #FFF8D9 48%, #F2FAFF 100%) !important;
+            color: var(--ink) !important;
+        }
+
+        /* Header: kuning pastel dominan, biru sebagai aksen */
+        header {
+            background: linear-gradient(100deg, #F6D66F 0%, #F9E7A4 52%, #A9D9F6 100%) !important;
+            color: #263238 !important;
+            border-bottom: 2px solid #E6C75C;
+        }
+        header h1 { color:#263238 !important; }
+        header p { color:#40515C !important; }
+        header .bg-white\/20, header .bg-white\/15 { background:rgba(255,255,255,.48) !important; }
+        header .text-yellow-200, header .text-amber-300 { color:#5D4A00 !important; }
+        header .text-white { color:#263238 !important; }
+        header .border-indigo-400\/40 { border-color:rgba(36,87,122,.30) !important; }
+
+        /* Navigasi */
+        .tab-btn.active {
+            background:#F4D35E !important;
+            color:#332A00 !important;
+            box-shadow:0 5px 15px rgba(180,145,20,.22) !important;
+            border:1px solid #D7B93F !important;
+        }
+        .tab-btn:not(.active) {
+            background:#FFF7D6 !important;
+            color:#34434D !important;
+        }
+        .tab-btn:not(.active):hover { background:#EAF6FF !important; color:#24577A !important; }
+
+        /* Kartu utama */
+        .home-card {
+            background:#FFFDF7 !important;
+            border-color:#E8D47D !important;
+            box-shadow:0 8px 22px rgba(112,91,25,.10) !important;
+        }
+        .home-stage {
+            background:linear-gradient(135deg,#FFFDF3,#FFF6C9) !important;
+            border-color:#E4C95C !important;
+        }
+        .home-sticker {
+            background:#FFF0A8 !important;
+            color:#5B4900 !important;
+            border-color:#D9BD45 !important;
+        }
+        .home-callout {
+            background:linear-gradient(135deg,#FFF2A9,#EAF6FF) !important;
+            border-color:#DCC65E !important;
+            color:#35434B !important;
+        }
+
+        /* Teks utility yang sebelumnya terlalu pucat */
+        .text-slate-900 { color:#202B31 !important; }
+        .text-slate-800 { color:#263238 !important; }
+        .text-slate-700 { color:#34434D !important; }
+        .text-slate-600 { color:#40515C !important; }
+        .text-slate-500 { color:#52636E !important; }
+        .text-slate-400 { color:#61727C !important; }
+        .text-indigo-600 { color:#24577A !important; }
+        .text-indigo-800 { color:#204E6D !important; }
+        .text-amber-950 { color:#4E3B00 !important; }
+        .text-amber-900 { color:#5D4800 !important; }
+        .text-amber-800 { color:#6B5300 !important; }
+        .text-amber-700 { color:#725600 !important; }
+        .text-purple-700 { color:#5D4C8A !important; }
+        .text-emerald-700 { color:#236B51 !important; }
+
+        /* Panel biru muda */
+        .bg-indigo-50 { background:#EAF6FF !important; }
+        .bg-indigo-100 { background:#DDF1FF !important; }
+        .border-indigo-100, .border-indigo-200, .border-indigo-400\/40 { border-color:#A9D9F6 !important; }
+        .bg-slate-50 { background:#FFFDF5 !important; }
+        .bg-slate-100 { background:#FFF6D0 !important; }
+        .bg-slate-200\/80 { background:#FFF1B8 !important; }
+        .border-slate-100 { border-color:#E8DFAF !important; }
+        .border-slate-200 { border-color:#DED7B7 !important; }
+        .border-slate-300 { border-color:#CFC7A4 !important; }
+
+        /* Tombol basis dan tombol aksi */
+        .tear-base-btn.bg-indigo-600 {
+            background:#F4D35E !important;
+            border-color:#C9A92E !important;
+            color:#352B00 !important;
+        }
+        .tear-base-btn.bg-slate-100 {
+            background:#EAF6FF !important;
+            border-color:#A9D9F6 !important;
+            color:#24577A !important;
+        }
+        .bg-amber-500 {
+            background:#F2CE55 !important;
+            color:#332900 !important;
+        }
+        .hover\\:bg-amber-600:hover { background:#E2BD3F !important; }
+        .bg-amber-50, .bg-amber-50\/80 { background:#FFF7D2 !important; }
+        .bg-amber-100 { background:#FFF0AE !important; }
+        .bg-amber-200 { background:#F8D96B !important; }
+        .border-amber-200, .border-amber-200\/80 { border-color:#E5C85C !important; }
+
+        /* Formula dan tabel */
+        .tear-math-formula, #tear-verbal-desc { color:#3A2E00 !important; }
+        #tear-verbal-desc { border-color:#E4D27D !important; }
+        table thead tr { background:#FFF0AE !important; color:#3A2E00 !important; }
+        table tbody tr { color:#34434D !important; }
+        table tbody tr.bg-amber-100\/80 { background:#FFF0AE !important; color:#3A2E00 !important; }
+
+        /* Penjelasan pangkat nol & negatif: kuning untuk nol, biru untuk negatif */
+        .pastel-explain-card {
+            color:#263238 !important;
+            border-color:#D9C55B !important;
+        }
+        .zero-explain {
+            background:linear-gradient(135deg,#FFF0A8,#FFFBE8) !important;
+            border-color:#D8BA38 !important;
+        }
+        .negative-explain {
+            background:linear-gradient(135deg,#EAF6FF,#F7FCFF) !important;
+            border-color:#9CCFEF !important;
+        }
+        .pastel-explain-card h3,
+        .pastel-explain-card p { color:#263238 !important; }
+        .pastel-explain-card b { color:#4B3A00 !important; }
+        .negative-explain b { color:#24577A !important; }
+        .explain-icon { background:#A9D9F6 !important; color:#1F587C !important; }
+        .zero-explain .explain-icon { background:#F8D96B !important; color:#624D00 !important; }
+        .formula-chip {
+            background:#FFFFFF !important;
+            color:#263238 !important;
+            border-color:#8DC6E8 !important;
+        }
+        .zero-explain .formula-chip { border-color:#D5B52F !important; }
+
+        /* Tangga pangkat */
+        .clear-ladder-row { color:#263238 !important; }
+        .clear-ladder-row .ladder-exp { color:#263238 !important; }
+        .ladder-value { color:#263238 !important; }
+        .ladder-step { color:#40515C !important; }
+        .zero-highlight {
+            background:linear-gradient(90deg,#FFF0A8,#FFFBE8) !important;
+            border-color:#D8BA38 !important;
+        }
+        .negative-highlight {
+            background:linear-gradient(90deg,#EAF6FF,#F7FCFF) !important;
+            border-color:#9CCFEF !important;
+        }
+
+        /* Sobekan kertas: putih hangat + tepi kuning lembut, tanpa tulisan di kertas */
+        .real-paper,
+        .tear-demo-sheet,
+        .tear-demo-split .tear-half,
+        .tear-piece-grid .torn-piece {
+            background:linear-gradient(145deg,#FFFFFF,#FFFDF4) !important;
+            border-color:#C9BFA2 !important;
+        }
+        .real-paper::before, .tear-demo-sheet::before { border-color:rgba(111,94,47,.20) !important; }
+        .tear-seam { background:repeating-linear-gradient(to bottom,#9E8A55 0 5px,transparent 5px 10px) !important; }
+        .tear-arrow-soft { color:#6A5600 !important; }
+        .tear-arrow-soft .line { background:#D7BA43 !important; }
+        .tear-arrow-soft .line::after { border-left-color:#D7BA43 !important; }
+        .tear-step-label { color:#34434D !important; }
+        .tear-instruction { background:#FFF0AE !important; border-color:#D8BA38 !important; color:#4B3A00 !important; }
+
+        /* Hilangkan gerakan lama yang terasa mengejutkan */
+        .soft-paper-transition { animation:softPaperFade .38s ease-out; }
+        @keyframes softPaperFade {
+            from { opacity:.72; }
+            to { opacity:1; }
+        }
+        .tear-anim .tear-demo-sheet { animation:sheetFadeOut .75s ease-in-out forwards; }
+        .tear-anim .tear-demo-split { animation:piecesAppear .8s .12s ease-out forwards; }
+
+        /* ===== GRAPH VISIBILITY FIX ===== */
+        .graph-frame{min-height:320px;background:#FFFDF7!important;border-color:#C9D4D2!important;}
+        #tearGraph{min-height:285px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+        #tearGraph svg{width:100%;height:285px;display:block;}
+        .graph-title{font-weight:900;fill:#263D4A;}
+        .graph-axis{stroke:#263D4A;stroke-width:2;}
+        .graph-grid{stroke:#D9E3DF;stroke-width:1;}
+        .graph-line{fill:none;stroke:#5E9B81;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;}
+        .graph-area{fill:#F3D36A;opacity:.22;}
+        .graph-point{fill:#F3D36A;stroke:#263D4A;stroke-width:2;}
+        .graph-point.active{fill:#5E9B81;stroke:#263D4A;stroke-width:3;}
+        .graph-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:800;fill:#3A4C55;}
+        .graph-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;fill:#60737D;}
+
+        /* Jangan tampilkan TeX/code mentah pada area aturan */
+        .formula-readable{font-family:'Plus Jakarta Sans',sans-serif;color:#263D4A;font-weight:800;line-height:1.5;}
+        .formula-readable .math-frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.05;margin:0 .12em;}
+        .formula-readable .math-frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .22em;}
+        .formula-readable .math-frac>span:last-child{padding:.08em .22em 0;}
+
+        /* Footer */
+        footer { background:#FFF9DE !important; border-color:#E5D47C !important; color:#4D5C64 !important; }
+
+
+        /* ===== FINAL POLISH: screenshot-like cream / navy / yellow / blue ===== */
+        :root{--ink:#243746;--muted:#506572;--cream:#F4EEDF;--paper:#FFFDF7;--yellow:#F3D36A;--yellow-soft:#FFF0AE;--blue-soft:#DCEEF7;--blue:#78AAC0;--green:#5E9B81;--green-dark:#3C6F5D;}
+        body{background:radial-gradient(circle at 8% 10%,rgba(243,211,106,.20) 0 95px,transparent 96px),radial-gradient(circle at 92% 14%,rgba(120,170,192,.20) 0 125px,transparent 126px),#F4EEDF!important;color:var(--ink)!important;}
+        header{background:linear-gradient(90deg,#FFF0A8 0%,#DDEFF7 52%,#E5F0D9 100%)!important;border-bottom:2px solid #263D4A!important;box-shadow:0 4px 0 rgba(38,61,74,.13)!important;}
+        header h1,header p{color:#263D4A!important;} header .text-yellow-200,header .text-amber-300{color:#5A4A00!important;}
+        .tab-btn{background:#FFF9EF!important;color:#263D4A!important;border:2px solid #263D4A!important;box-shadow:3px 3px 0 rgba(38,61,74,.18)!important;}
+        .tab-btn.active{background:#5E9B81!important;color:#fff!important;border-color:#263D4A!important;box-shadow:3px 3px 0 #263D4A!important;}
+        .tab-btn:not(.active):hover{background:#E5F2F8!important;color:#263D4A!important;}
+        .home-card{background:#FFFDF7!important;border:2px solid #2C414D!important;box-shadow:5px 5px 0 rgba(44,65,77,.14)!important;}
+        .home-stage{background:linear-gradient(145deg,#EFF7F8,#FFF7D8)!important;border:2px solid #7AA8BB!important;}
+        #tab-tear>.bg-gradient-to-r{background:linear-gradient(115deg,#F7D66E 0%,#ECF4F6 58%,#D2E7EF 100%)!important;color:#243746!important;border:2px solid #243746!important;box-shadow:5px 5px 0 rgba(36,55,70,.12)!important;}
+        #hero-banner-desc{color:#344B58!important;}
+        .katex,.katex *{color:#203746!important;}
+        .tear-math-formula .katex{font-size:1.14em!important;}
+        .pastel-explain-card h3,.pastel-explain-card p,.pastel-explain-card b{color:#263B48!important;}
+        .zero-explain{background:linear-gradient(135deg,#FFF0A8,#FFF9DC)!important;border:2px solid #B79A2C!important;}
+        .negative-explain{background:linear-gradient(135deg,#DCEEF7,#F6FBFD)!important;border:2px solid #6D9DB4!important;}
+        #t2-ladder-container{max-height:720px;overflow-y:auto;padding-right:6px;}
+        #t2-ladder-container::-webkit-scrollbar{width:9px;}#t2-ladder-container::-webkit-scrollbar-thumb{background:#86AFBF;border-radius:20px;border:2px solid #F6F0E1;}
+        .clear-ladder-row{min-height:58px;background:#FFFDF8!important;border:2px solid #CAD2D0!important;color:#263B48!important;}
+        .clear-ladder-row.zero-highlight{background:#FFF0A8!important;border-color:#B69B2B!important;}
+        .clear-ladder-row.negative-highlight{background:#E3F2F9!important;border-color:#82AFC0!important;}
+        .clear-ladder-row .ladder-exp{min-width:78px;text-align:center;}.ladder-value{min-width:125px;text-align:center;}.ladder-step{min-width:195px;text-align:left;}
+        .tear-demo-sheet,.tear-demo-split .tear-half,.tear-piece-grid .torn-piece,.real-paper{background:linear-gradient(145deg,#FFFEFA,#F3EDDE)!important;border:2px solid #C1B696!important;}
+        .tear-arrow-soft{color:#3A5361!important;}.tear-arrow-soft .line{background:#73A5BB!important;}.tear-arrow-soft .line::after{border-left-color:#73A5BB!important;}.tear-step-label{color:#314650!important;}
+        .tear-instruction{background:#FFF0AE!important;border:2px solid #B79C2E!important;color:#3A3000!important;}
+        .tear-base-btn.bg-indigo-600{background:#5E9B81!important;border-color:#365F4F!important;color:white!important;}.tear-base-btn.bg-slate-100{background:#DCEEF7!important;border-color:#7FAABD!important;color:#294A59!important;}
+        .bg-amber-500{background:#F3D36A!important;color:#243746!important;border:2px solid #243746!important;}.home-callout{background:#DDEFF7!important;border:2px solid #7CAABC!important;color:#294857!important;}
+        .formula-chip{background:#FFFDF8!important;border:2px solid #7FAABD!important;color:#203746!important;}
+        /* Formula text should never look like programming/code. */
+        .font-mono-math,.font-mono{font-family:'Plus Jakarta Sans',sans-serif!important;letter-spacing:0!important;}
+        .text-slate-900,.text-slate-800,.text-slate-700,.text-slate-600{color:#263B48!important;}.text-slate-500,.text-slate-400{color:#536874!important;}
+        footer{background:#FFF4C9!important;border-color:#D6BF5E!important;color:#435864!important;}
+
+        .math-inline{display:inline-flex;align-items:center;vertical-align:middle;color:#203746!important;font-weight:800;}
+        .math-frac{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;vertical-align:middle;margin:0 .15em;}
+        .math-frac>span:first-child{border-bottom:1.5px solid #203746;padding:0 .18em .08em;}
+        .math-frac>span:last-child{padding:.08em .18em 0;}
+    
+        .formula-subline {
+            margin-top: 5px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #234052;
+            opacity: 0.9;
+        }
+    
+        /* ===== FINAL CLEANUP: Pangkat Negatif ===== */
+        .explain-topline{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+        .explain-kicker{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#557180;margin-bottom:1px;}
+        .explain-body{color:#314650!important;margin:0 0 14px!important;}
+        .explain-formula-main{background:#FFFDF7;border:2px solid #CDBD6C;border-radius:18px;padding:11px 14px;text-align:center;margin-top:8px;}
+        .negative-main{border-color:#86B3C5;background:#F8FCFE;}
+        .formula-label{font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#6A7E87;margin-bottom:4px;}
+        .formula-hero{font-size:1.42rem;font-weight:900;color:#203746;min-height:38px;display:flex;align-items:center;justify-content:center;}
+        .formula-sub{margin-top:6px;font-size:1rem;font-weight:800;color:#3A4C55;}
+        .negative-example-title{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#365F70;margin:15px 0 8px;}
+        .negative-example-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;}
+        .negative-example-card{min-width:0;min-height:72px;background:#FFFFFF;border:1.5px solid #A9CBD8;border-radius:14px;padding:8px 4px;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:0 2px 0 rgba(44,65,77,.07);color:#203746;}
+        .negative-card-power{font-size:1rem;font-weight:900;line-height:1;}
+        .negative-card-equals{font-size:.8rem;font-weight:800;color:#6C7E86;}
+        .negative-card-value{font-size:.95rem;font-weight:900;display:flex;align-items:center;}
+        .negative-example-card .math-frac{display:inline-flex;flex-direction:column;align-items:center;line-height:1.02;vertical-align:middle;}
+        .negative-example-card .math-frac>span:first-child{border-bottom:1.4px solid #203746;padding:0 5px 2px;}
+        .negative-example-card .math-frac>span:last-child{padding-top:2px;}
+        .negative-example-note{grid-column:1/-1;margin-top:2px;background:#EAF5FA;border:1.5px dashed #8FB6C5;border-radius:12px;padding:9px 10px;text-align:center;font-size:.75rem;font-weight:700;color:#355664;}
+        .note-arrow{font-size:1rem;font-weight:900;margin-right:3px;}
+        @media (max-width:900px){.negative-example-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+        @media (max-width:520px){.negative-example-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.formula-hero{font-size:1.28rem;}}
+
+
+        /* ===== CLEAN REBUILD: TAB 2 ===== */
+        .expo-section-head{display:flex;align-items:flex-start;gap:16px;padding:22px 24px;border-radius:24px;border:2px solid #263D4A;box-shadow:5px 5px 0 rgba(38,61,74,.12);}
+        .yellow-head{background:linear-gradient(120deg,#F9E7A4,#FFF7D6 58%,#DCEEF7);}
+        .head-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:23px;flex:none;border:2px solid #263D4A;}
+        .yellow-icon{background:#F3D36A;color:#263D4A;}
+        .section-kicker,.mini-kicker{font-size:.66rem;font-weight:900;letter-spacing:.09em;color:#52636E;margin-bottom:4px;}
+        .expo-section-head h2{margin:0;color:#243746;font-size:1.55rem;font-weight:900;line-height:1.15;}
+        .expo-section-head p{margin:.4rem 0 0;color:#40515C;font-size:.88rem;line-height:1.6;max-width:760px;}
+        .zero-neg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
+        .concept-card{padding:22px;border-radius:24px;border:2px solid #263D4A;box-shadow:5px 5px 0 rgba(38,61,74,.10);}
+        .concept-zero{background:linear-gradient(145deg,#FFF4BF,#FFFDF3);border-color:#B69B2B;}
+        .concept-negative{background:linear-gradient(145deg,#E7F3F8,#F9FCFD);border-color:#78A8BB;}
+        .concept-card-title{display:flex;align-items:center;gap:12px;}
+        .concept-card-title h3{margin:0;color:#243746;font-size:1.05rem;font-weight:900;line-height:1.25;}
+        .concept-badge{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:900;border:2px solid #263D4A;flex:none;}
+        .zero-badge{background:#F3D36A;color:#4A3B00;}.negative-badge{background:#A9D9F6;color:#24577A;}
+        .concept-card p{margin:14px 0 12px;color:#334B58;font-size:.84rem;line-height:1.6;}
+        .concept-equation{display:flex;align-items:center;justify-content:center;min-height:64px;padding:12px;border-radius:17px;background:#FFFDF7;border:1.5px solid rgba(38,61,74,.16);}
+        .blue-equation{background:#F8FCFE;border-color:#9CCFEF;}
+        .math-big{font-size:1.35rem;font-weight:900;color:#243746;letter-spacing:.01em;}
+        .math-big sup,.ladder-power sup,.flow-exp sup,.worked-formula sup{font-size:.62em;vertical-align:super;line-height:0;}
+        .rule-chip{margin-top:12px;padding:10px 12px;border-radius:13px;font-size:.74rem;line-height:1.45;color:#334B58;}
+        .yellow-chip{background:#FFF0AE;border:1px dashed #C5A936;}.blue-chip{background:#DCEEF7;border:1px dashed #79A9BD;}
+        .worked-example{margin-top:14px;border-radius:15px;padding:11px 13px;background:#FFFDF7;border:1px solid #D8C66B;}
+        .worked-label{font-size:.66rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#6A5A12;margin-bottom:4px;}
+        .worked-formula{font-size:1rem;color:#243746;font-weight:800;text-align:center;}
+        .negative-path{margin-top:14px;padding:13px;border-radius:16px;background:rgba(255,255,255,.62);border:1px solid #B7D5E0;}
+        .path-title{font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#4A6C7C;margin-bottom:9px;}
+        .negative-flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+        .flow-step{min-width:76px;padding:8px 10px;border-radius:13px;background:#FFFDF7;border:1.5px solid #C5CFD3;text-align:center;}
+        .flow-step.negative{background:#EAF5FA;border-color:#9FC4D3;}
+        .flow-exp{font-weight:900;font-size:1rem;color:#243746;}.flow-value{margin-top:4px;font-size:.85rem;font-weight:800;color:#40515C;min-height:21px;}
+        .flow-arrow{font-size:.69rem;font-weight:900;color:#4C7384;white-space:nowrap;}
+        .frac{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;vertical-align:middle;line-height:1.02;font-weight:900;min-width:24px;}
+        .frac span:first-child{border-bottom:1.5px solid currentColor;padding:0 4px 2px;}.frac span:last-child{padding-top:2px;}
+        .negative-summary-card{display:flex;align-items:center;gap:13px;padding:14px 17px;border-radius:18px;background:#FFF0AE;border:2px solid #B69B2B;box-shadow:4px 4px 0 rgba(38,61,74,.08);}
+        .summary-icon{width:38px;height:38px;border-radius:12px;background:#F3D36A;display:flex;align-items:center;justify-content:center;color:#5A4700;font-size:17px;flex:none;}
+        .summary-title{font-size:.76rem;font-weight:900;color:#4A3B00;text-transform:uppercase;letter-spacing:.05em;}.summary-text{font-size:.78rem;font-weight:700;color:#4A5560;margin-top:2px;line-height:1.45;}
+        .basis-pill{background:#DCEEF7;color:#24577A;border:1px solid #91BDCF;padding:4px 10px;border-radius:10px;font-size:.82rem;font-weight:900;}
+        .pattern-box{background:#F5F8F7;border:1.5px solid #C8D3D0;border-radius:18px;padding:13px;}.pattern-title{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#435864;margin-bottom:8px;}.pattern-row{display:flex;align-items:center;gap:9px;padding:6px 0;border-top:1px solid #E3E9E7;font-size:.74rem;color:#40515C;}.pattern-row:first-of-type{border-top:0;}.pattern-row b{margin-left:auto;color:#243746;}.pattern-symbol{width:23px;height:23px;display:flex;align-items:center;justify-content:center;border-radius:8px;font-weight:900;}.pattern-symbol.up{background:#E4F1E7;color:#3C6F5D}.pattern-symbol.down{background:#DCEEF7;color:#24577A}.pattern-symbol.zero{background:#FFF0AE;color:#725600}
+        .logic-summary{padding:13px;border-radius:18px;background:#FFFDF7;border:1.5px solid #CFD8D4;color:#3E515B;font-size:.76rem;}.logic-title{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#435864;margin-bottom:8px;}.logic-item{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid #E5EBE8;line-height:1.4;}.logic-item:first-of-type{border-top:0}.logic-item span:first-child{font-weight:900;white-space:nowrap}.logic-item.yellow span:first-child{color:#795E00}.logic-item.blue span:first-child{color:#2B6986}
+        .ladder-range-badge{background:#FFF0AE;color:#5D4A00;border:1px solid #C8AC3A;border-radius:999px;padding:5px 10px;font-size:.7rem;font-weight:900;white-space:nowrap;}
+        .ladder-key{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:3px;}.ladder-key span{padding:6px 9px;border-radius:10px;background:#F5F8F7;border:1px solid #D4DEDB;font-size:.68rem;font-weight:800;color:#40515C;}.ladder-key span b{color:#2C6B59;margin-right:3px;}
+        #t2-ladder-container.clean-ladder{max-height:610px;overflow-y:auto;padding:2px 6px 3px 1px;}
+        #t2-ladder-container.clean-ladder::-webkit-scrollbar{width:8px;}#t2-ladder-container.clean-ladder::-webkit-scrollbar-thumb{background:#9AB8C3;border-radius:999px;border:2px solid #FFFDF7;}
+        .ladder-item{display:grid;grid-template-columns:100px 120px minmax(0,1fr);align-items:center;gap:10px;min-height:50px;padding:8px 11px;background:#FFFDF7;border:1.5px solid #D1DAD7;border-radius:14px;color:#243746;}.ladder-item+.ladder-item{margin-top:7px;}.ladder-item:hover{border-color:#AFC4C9;transform:translateX(1px);}
+        .ladder-zero{background:#FFF3B5;border-color:#D1B544;box-shadow:inset 4px 0 0 #D1B544;}.ladder-negative{background:#EFF8FB;border-color:#A7CBD8;box-shadow:inset 4px 0 0 #78A8BB;}
+        .ladder-power{font-size:1.18rem;font-weight:900;text-align:center;}.ladder-result{font-size:.96rem;font-weight:800;text-align:center;display:flex;justify-content:center;align-items:center;gap:4px;min-height:30px;}.ladder-result .equals{color:#71818A;font-weight:700;}.ladder-step-text{font-size:.71rem;color:#52636E;line-height:1.35;}.start-tag,.zero-tag,.down-tag,.negative-tag{display:inline-block;font-size:.62rem;font-weight:900;border-radius:7px;padding:3px 6px;margin-right:5px;vertical-align:middle;}.start-tag{background:#E4F1E7;color:#3C6F5D}.zero-tag{background:#F3D36A;color:#5E4A00}.down-tag{background:#DCEEF7;color:#24577A}.negative-tag{background:#CFEAF4;color:#2B6986}
+        @media(max-width:900px){.zero-neg-grid{grid-template-columns:1fr}.ladder-item{grid-template-columns:82px 100px minmax(0,1fr)}}
+        @media(max-width:600px){.expo-section-head{padding:18px}.expo-section-head h2{font-size:1.25rem}.concept-card{padding:17px}.negative-flow{gap:5px}.flow-step{min-width:68px}.ladder-item{grid-template-columns:70px 88px minmax(0,1fr);gap:7px;padding:7px 8px}.ladder-power{font-size:1rem}.ladder-step-text{font-size:.65rem}}
+
+</style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <header class="bg-gradient-to-r from-sky-300 via-blue-300 to-amber-200 text-slate-800 shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-white/20 rounded-xl shadow-inner border border-white/30">
+                    <i class="fa-solid fa-house-chimney text-2xl text-yellow-200"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight flex items-center gap-2">
+                        Exponent Concept Explorer
+                    </h1>
+                    <p class="text-xs text-slate-700 font-medium">Belajar Eksponen • Visual, Interaktif & Menyenangkan</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Sound Toggle Button -->
+                <button onclick="toggleAudio()" id="audio-toggle-btn" class="bg-white/15 hover:bg-white/25 text-amber-300 text-xs px-3 py-1.5 rounded-full border border-indigo-400/40 flex items-center gap-2 font-bold transition shadow-sm">
+                    <i id="audio-icon" class="fa-solid fa-volume-xmark"></i> <span id="audio-status-text">Suara: OFF</span>
+                </button>
+                <span class="bg-white/15 text-white text-xs px-3.5 py-1.5 rounded-full border border-indigo-400/40 hidden sm:flex items-center gap-2 font-semibold">
+                    <i class="fa-solid fa-graduation-cap text-amber-300"></i> Alat Peraga Interaktif
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-grow">
+        
+        <!-- Tab Buttons Container -->
+        <div class="flex flex-wrap gap-2 p-1.5 bg-slate-200/80 rounded-2xl mb-6 max-w-4xl mx-auto shadow-inner border border-slate-300/60">
+            <button onclick="switchTab('tab-tear')" id="btn-tab-tear" class="tab-btn active flex-1 min-w-[180px] py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all text-center flex items-center justify-center gap-2">
+                <i class="fa-solid fa-scissors text-amber-300"></i> 1. Sobek Kertas (<span class="math-inline">a<sup>n</sup></span>)
+            </button>
+            <button onclick="switchTab('tab-zero-neg')" id="btn-tab-zero-neg" class="tab-btn flex-1 min-w-[180px] py-3 px-3 text-slate-600 rounded-xl font-bold text-xs sm:text-sm transition-all text-center flex items-center justify-center gap-2">
+                <i class="fa-solid fa-stairs text-indigo-500"></i> 2. Pangkat 0 & Negatif
+            </button>
+            <button onclick="switchTab('tab-properties')" id="btn-tab-properties" class="tab-btn flex-1 min-w-[180px] py-3 px-3 text-slate-600 rounded-xl font-bold text-xs sm:text-sm transition-all text-center flex items-center justify-center gap-2">
+                <i class="fa-solid fa-calculator text-emerald-500"></i> 3. Sifat-Sifat Eksponen
+            </button>
+        </div>
+
+        <div class="max-w-6xl mx-auto mb-5 flex justify-center">
+            <span class="home-sticker"><i class="fa-solid fa-mug-hot"></i> Suasana Belajar di Rumah <span>•</span> Santai, Ceria, Tetap Paham</span>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- TAB 1: DYNAMIC BASE PAPER TEAR SIMULATION (<span class="math-inline">a<sup>n</sup></span>)                 -->
+        <!-- ================================================================= -->
+        <section id="tab-tear" class="tab-content block space-y-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-sky-300 via-blue-300 to-amber-200 p-6 rounded-3xl shadow-md text-white relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 opacity-10 pointer-events-none">
+                    <i class="fa-solid fa-scissors text-[140px]"></i>
+                </div>
+                <div class="max-w-3xl space-y-2 relative z-10">
+                    <span class="bg-yellow-100 text-slate-700 font-black text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full">Alat Peraga Visual</span>
+                    <h2 class="text-2xl font-black">Bagaimana Pemotongan Kertas Membentuk Eksponen?</h2>
+                    <p id="hero-banner-desc" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                        <!-- Injected via JS -->
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Interactive Visual Paper Pieces Container WITH ACTION BUTTONS ATTACHED -->
+                <div class="lg:col-span-7 home-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-scroll text-amber-500"></i> Kertas yang Disobek
+                            </h3>
+                            <span id="tear-piece-badge" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full border border-indigo-200">
+                                Total: 1 Potongan
+                            </span>
+                        </div>
+
+                        <!-- Canvas/Stage for torn paper pieces -->
+                        <div id="paper-stage" class="home-stage min-h-[300px] p-5 bg-slate-100/90 rounded-2xl border-2 border-dashed border-slate-300 flex flex-wrap items-center justify-center gap-2.5 overflow-y-auto max-h-[320px] relative transition-all">
+                            <!-- Dynamically injected via JavaScript -->
+                        </div>
+
+                        <!-- ACTION BUTTONS PLACED DIRECTLY BELOW THE STAGE -->
+                        <div class="p-3 bg-amber-50/80 rounded-2xl border border-amber-200/80 space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/60 pb-2">
+                                <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-scissors text-amber-600"></i> Aksi Lembar Kertas:
+                                </span>
+                                <span id="tear-n-val" class="px-2.5 py-0.5 bg-amber-200 text-amber-900 font-extrabold rounded-lg text-xs">Tahap n = 0</span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button onclick="tearStepNext()" class="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2 active:scale-95">
+                                    <i class="fa-solid fa-scissors"></i> Sobek Kertas (+1)
+                                </button>
+                                <button onclick="tearReset()" class="py-3 px-4 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs sm:text-sm rounded-xl border border-slate-300 transition flex items-center justify-center gap-1.5 active:scale-95 shadow-sm">
+                                    <i class="fa-solid fa-rotate-left"></i> Reset Utuh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Data Table Log -->
+                    <div class="border-t border-slate-100 pt-3 space-y-2">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tabel Data Perkalian Berulang:</div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left text-slate-600 border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                        <th class="p-2 rounded-l-lg">Tahap (<span class="math-inline">n</span>)</th>
+                                        <th class="p-2">Perkalian Berulang</th>
+                                        <th class="p-2">Bentuk <span class="math-inline">a<sup>n</sup></span></th>
+                                        <th class="p-2 text-right rounded-r-lg">Hasil (Potongan)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tear-table-body">
+                                    <!-- Dynamically injected via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parameters & Formula Panel -->
+                <div class="lg:col-span-5 home-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-amber-500"></i> Pengaturan Basis Bilangan
+                            </h3>
+                            <span class="text-xs text-indigo-600 font-bold bg-indigo-50 px-2.5 py-1 rounded-full">Basis Fleksibel</span>
+                        </div>
+
+                        <!-- Base (a) Selector Buttons -->
+                        <div>
+                            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Pilih Nilai Basis (<span class="math-inline">a</span>):</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="setTearBase(2)" id="btn-base-2" class="tear-base-btn py-2 px-3 rounded-xl border font-black text-sm transition text-center bg-indigo-600 text-white shadow-sm border-indigo-600">
+                                    a = 2
+                                </button>
+                                <button onclick="setTearBase(3)" id="btn-base-3" class="tear-base-btn py-2 px-3 rounded-xl border font-black text-sm transition text-center bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200">
+                                    a = 3
+                                </button>
+                                <button onclick="setTearBase(4)" id="btn-base-4" class="tear-base-btn py-2 px-3 rounded-xl border font-black text-sm transition text-center bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200">
+                                    a = 4
+                                </button>
+                                <button onclick="setTearBase(5)" id="btn-base-5" class="tear-base-btn py-2 px-3 rounded-xl border font-black text-sm transition text-center bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200">
+                                    a = 5
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Slider for Exponent (n) -->
+                        <div class="pt-2">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Pilih Langsung Tahap (<span class="math-inline">n</span>):</label>
+                            </div>
+                            <input type="range" id="tear-slider" min="0" max="5" value="0" class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500" oninput="updatePaperTear(this.value, true)">
+                            <div id="tear-slider-labels" class="flex justify-between text-xs text-slate-400 font-bold mt-1.5">
+                                <span>0x</span><span>1x</span><span>2x</span><span>3x</span><span>4x</span><span>5x</span>
+                            </div>
+                        </div>
+
+                        <!-- Rendered Math Formula Box -->
+                        <div class="p-4 bg-amber-50/80 border border-amber-200/80 rounded-2xl space-y-2">
+                            <div class="text-[11px] uppercase font-bold tracking-wider text-amber-800">Persamaan Eksponen:</div>
+                            <div id="tear-math-formula" class="text-base sm:text-lg font-bold text-amber-950 min-h-[32px] flex items-center"></div>
+                            <div id="tear-verbal-desc" class="text-xs text-slate-700 leading-relaxed font-medium pt-2 border-t border-amber-200/60"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exponential Growth Chart Placed AT THE BOTTOM -->
+            <div class="home-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-emerald-700"></i> Grafik Pertumbuhan Eksponensial (<span class="math-inline">a<sup>n</sup></span>)
+                    </h3>
+                    <span id="chart-basis-badge" class="text-xs text-emerald-800 font-bold bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
+                        Basis a = 2
+                    </span>
+                </div>
+                <div class="graph-frame bg-slate-50 p-3 sm:p-4 border-2 border-slate-200 rounded-2xl">
+                    <div id="tearGraph" class="w-full" aria-label="Grafik pertumbuhan eksponensial"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 2: PANGKAT 0 & NEGATIF -->
+        <!-- ================================================================= -->
+        <section id="tab-zero-neg" class="tab-content hidden space-y-6">
+            <div class="expo-section-head yellow-head">
+                <div class="head-icon yellow-icon"><i class="fa-solid fa-stairs"></i></div>
+                <div>
+                    <div class="section-kicker">ALAT PERAGA • POLA PANGKAT</div>
+                    <h2>Pangkat 0 dan Pangkat Negatif</h2>
+                    <p>Gunakan tangga pangkat untuk melihat perubahan nilai ketika pangkat turun. Setiap turun satu tingkat, nilainya dibagi dengan basis.</p>
+                </div>
+            </div>
+
+            <div class="zero-neg-grid">
+                <article class="concept-card concept-zero">
+                    <div class="concept-card-title">
+                        <span class="concept-badge zero-badge">0</span>
+                        <div>
+                            <div class="mini-kicker">PANGKAT NOL</div>
+                            <h3>Pangkat nol selalu menghasilkan 1</h3>
+                        </div>
+                    </div>
+                    <p>Karena dari pangkat 1 kita turun satu tingkat, hasil sebelumnya dibagi dengan basis.</p>
+                    <div class="concept-equation">
+                        <span class="math-big">a<sup>1</sup> ÷ a = a ÷ a = 1</span>
+                    </div>
+                    <div class="rule-chip yellow-chip">Jadi, <strong>a<sup>0</sup> = 1</strong> untuk a ≠ 0.</div>
+                    <div id="t2-zero-example" class="worked-example yellow-example"></div>
+                </article>
+
+                <article class="concept-card concept-negative">
+                    <div class="concept-card-title">
+                        <span class="concept-badge negative-badge">−</span>
+                        <div>
+                            <div class="mini-kicker">PANGKAT NEGATIF</div>
+                            <h3>Pangkat negatif menjadi kebalikan</h3>
+                        </div>
+                    </div>
+                    <p>Setelah mencapai pangkat 0, turun satu tingkat lagi berarti membagi 1 dengan basis. Karena itu hasilnya berupa pecahan.</p>
+                    <div class="concept-equation blue-equation">
+                        <span class="math-big">a<sup>−n</sup> = 1 ÷ a<sup>n</sup></span>
+                    </div>
+                    <div class="rule-chip blue-chip">Ingat: <strong>pangkat negatif bukan berarti hasilnya negatif.</strong></div>
+                    <div class="negative-path">
+                        <div class="path-title">Dari pangkat 0 ke pangkat negatif</div>
+                        <div id="t2-negative-flow" class="negative-flow"></div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="negative-summary-card">
+                <div class="summary-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                <div>
+                    <div class="summary-title">Pola yang perlu diingat</div>
+                    <div class="summary-text">Naik 1 pangkat = dikali basis • Turun 1 pangkat = dibagi basis • Lewat 0 = masuk ke bentuk kebalikan (pecahan).</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-4 home-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                    <h3 class="font-bold text-slate-800 text-base border-b border-slate-100 pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-emerald-600"></i> Pilih Basis Bilangan (a)
+                    </h3>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-semibold text-slate-700">Basis (a):</label>
+                            <span id="t2-a-val" class="basis-pill">a = 2</span>
+                        </div>
+                        <input type="range" id="t2-a" min="2" max="5" value="2" class="w-full h-2.5 rounded-lg appearance-none cursor-pointer accent-emerald-600" oninput="updateTabZeroNeg()">
+                        <div class="flex justify-between text-xs text-slate-500 font-bold mt-1"><span>2</span><span>3</span><span>4</span><span>5</span></div>
+                    </div>
+
+                    <div class="pattern-box">
+                        <div class="pattern-title"><i class="fa-solid fa-route"></i> Ikuti polanya</div>
+                        <div class="pattern-row"><span class="pattern-symbol up">↑</span><span>Naik 1 pangkat</span><b>× a</b></div>
+                        <div class="pattern-row"><span class="pattern-symbol down">↓</span><span>Turun 1 pangkat</span><b>÷ a</b></div>
+                        <div class="pattern-row"><span class="pattern-symbol zero">0</span><span>Pangkat nol</span><b>hasil = 1</b></div>
+                    </div>
+
+                    <div id="t2-logic-summary" class="logic-summary"></div>
+                </div>
+
+                <div class="lg:col-span-8 home-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3 gap-3">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-stairs text-emerald-600"></i> Tangga Pangkat
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-1">Dari pangkat 8 turun sampai −5</p>
+                        </div>
+                        <span class="ladder-range-badge">8 → −5</span>
+                    </div>
+
+                    <div class="ladder-key">
+                        <span><b>↑</b> naik: × <span id="legend-a-up">2</span></span>
+                        <span><b>↓</b> turun: ÷ <span id="legend-a-down">2</span></span>
+                        <span><b>0</b> menghasilkan 1</span>
+                    </div>
+
+                    <div id="t2-ladder-container" class="clean-ladder"></div>
+                </div>
+            </div>
+        </section>
+        <!-- ================================================================= -->
+        <!-- TAB 3: EXPONENT PROPERTIES INTERACTIVE ($a^m \times a^n$, etc.)   -->
+        <!-- ================================================================= -->
+        <section id="tab-properties" class="tab-content hidden space-y-6">
+            <!-- Header Banner -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl shrink-0">
+                        <i class="fa-solid fa-layer-group text-2xl"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h2 class="text-lg font-bold text-slate-900">Eksplorasi Sifat-Sifat Operasi Eksponen</h2>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Ubah nilai basis dan pangkat untuk melihat bagaimana faktor-faktor bilangan digabungkan, dieliminasi (dicoret), atau dikalikan berulang.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Switcher Tabs -->
+            <div class="flex justify-center">
+                <div class="inline-flex p-1.5 bg-slate-200/80 rounded-2xl border border-slate-300/60 gap-1">
+                    <button onclick="setTab3Prop('mul')" id="t3-btn-mul" class="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm bg-emerald-600 text-white shadow-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-xmark"></i> Perkalian (<span class="math-inline">a<sup>m</sup> · a<sup>n</sup></span>)
+                    </button>
+                    <button onclick="setTab3Prop('div')" id="t3-btn-div" class="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+                        <i class="fa-solid fa-divide"></i> Pembagian (<span class="math-inline">a<sup>m</sup> ÷ a<sup>n</sup></span>)
+                    </button>
+                    <button onclick="setTab3Prop('pow')" id="t3-btn-pow" class="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group"></i> Perpangkatan (<span class="math-inline">(a<sup>m</sup>)<sup>n</sup></span>)
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Controls Panel -->
+                <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
+                    <h3 class="font-bold text-slate-800 text-base border-b border-slate-100 pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-emerald-500"></i> Parameter Nilai
+                    </h3>
+
+                    <!-- Basis Slider -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-xs font-bold text-slate-700">Basis (<span class="math-inline">a</span>):</label>
+                            <span id="t3-a-val" class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-extrabold rounded text-xs">a = 3</span>
+                        </div>
+                        <input type="range" id="t3-a" min="2" max="5" value="3" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600" oninput="updateTab3Properties()">
+                    </div>
+
+                    <!-- m Exponent Slider -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-xs font-bold text-slate-700">Pangkat Pertama (<span class="math-inline">m</span>):</label>
+                            <span id="t3-m-val" class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 font-extrabold rounded text-xs">m = 4</span>
+                        </div>
+                        <input type="range" id="t3-m" min="1" max="5" value="4" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" oninput="updateTab3Properties()">
+                    </div>
+
+                    <!-- n Exponent Slider -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-xs font-bold text-slate-700">Pangkat Kedua (<span class="math-inline">n</span>):</label>
+                            <span id="t3-n-val" class="px-2.5 py-0.5 bg-purple-100 text-purple-800 font-extrabold rounded text-xs">n = 2</span>
+                        </div>
+                        <input type="range" id="t3-n" min="1" max="5" value="2" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600" oninput="updateTab3Properties()">
+                    </div>
+
+                    <!-- Property Rule Card -->
+                    <div class="p-4 bg-emerald-50 border border-emerald-200/80 rounded-2xl space-y-2">
+                        <div class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Rumus / Aturan Sifat:</div>
+                        <div id="t3-rule-box" class="text-xs text-emerald-950 font-medium leading-relaxed">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Explanation Panel -->
+                <div class="lg:col-span-8 home-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-6">
+                    <div>
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-emerald-500"></i> Visualisasi Pengelompokan Faktor
+                            </h3>
+                            <div id="t3-math-formula" class="text-base sm:text-lg font-bold text-emerald-800 bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-200/60"></div>
+                        </div>
+
+                        <!-- Dynamic Visual Factors Canvas -->
+                        <div id="t3-visual-container" class="p-6 bg-slate-50 border border-slate-200 rounded-2xl min-h-[200px] flex flex-col justify-center items-center gap-4">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8 text-center text-xs text-slate-500 font-medium">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>Exponent Concept Explorer &copy; Alat Peraga Matematika Interaktif</span>
+            <span>Berbasis KaTeX, Visualisasi Sobekan Kertas, & Interaksi Eksponen</span>
+        </div>
+    </footer>
+
+    <script>
+        // Global State Variables
+        let currentTearBase = 2;
+        let currentTearN = 0;
+        let tearChart = null; // kept for compatibility; graph is rendered with SVG
+        let activeTab3Prop = 'mul';
+        let isAudioMuted = true;
+        let audioCtx = null;
+
+        // Realistic Paper Rip Audio Synthesizer using Granular Audio Synthesis
+        function playPaperRipSound() {
+            if (isAudioMuted) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const duration = 0.35; // 350ms tearing sound duration
+                const bufferSize = audioCtx.sampleRate * duration;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                // Granular micro-burst synthesis for realistic paper tearing texture ("Srrkkk!")
+                for (let i = 0; i < bufferSize; i++) {
+                    const progress = i / bufferSize;
+                    // Envelope: fast attack, fluttering sustain, smooth decay
+                    const envelope = Math.sin(progress * Math.PI) * (1 - Math.pow(progress, 0.8));
+                    
+                    // High-frequency noise + micro crackle impulses
+                    const baseNoise = (Math.random() * 2 - 1);
+                    const crackleImpulse = (Math.random() > 0.84) ? (Math.random() * 2 - 1) * 3.5 : 0.8;
+                    
+                    data[i] = baseNoise * crackleImpulse * envelope;
+                }
+
+                const noiseSource = audioCtx.createBufferSource();
+                noiseSource.buffer = buffer;
+
+                // Bandpass Filter isolating paper tearing frequencies (800Hz - 3200Hz)
+                const filter = audioCtx.createBiFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1800, audioCtx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(1100, audioCtx.currentTime + duration);
+                filter.Q.setValueAtTime(1.5, audioCtx.currentTime);
+
+                const gainNode = audioCtx.createGain();
+                gainNode.gain.setValueAtTime(0.75, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+
+                noiseSource.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                noiseSource.start();
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        function toggleAudio() {
+            isAudioMuted = !isAudioMuted;
+            const icon = document.getElementById('audio-icon');
+            const statusText = document.getElementById('audio-status-text');
+            const btn = document.getElementById('audio-toggle-btn');
+
+            if (isAudioMuted) {
+                icon.className = 'fa-solid fa-volume-xmark';
+                statusText.innerText = 'Suara: OFF';
+                btn.classList.add('opacity-70');
+            } else {
+                icon.className = 'fa-solid fa-volume-high';
+                statusText.innerText = 'Suara: ON';
+                btn.classList.remove('opacity-70');
+                playPaperRipSound();
+            }
+        }
+
+        // Safe math helper: KaTeX when available, readable HTML fallback otherwise.
+        function escapeHTML(value) {
+            return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));
+        }
+
+        function texToReadableHTML(tex) {
+            // Tampilkan rumus sebagai HTML biasa agar TIDAK PERNAH muncul sebagai kode LaTeX.
+            let s = escapeHTML(tex);
+
+            // Perintah LaTeX yang umum dipakai di alat peraga ini.
+            s = s.replace(/\\underbrace\{([^{}]*)\}_\{([^{}]*)\}/g, '$1');
+            s = s.replace(/\\text\{([^{}]*)\}/g, '$1');
+            s = s.replace(/\\mathrm\{([^{}]*)\}/g, '$1');
+            s = s.replace(/\\left|\\right/g, '');
+            s = s.replace(/ /g, '&emsp;');
+            s = s.replace(/\\,|\\;/g, '&nbsp;');
+            s = s.replace(/\\times/g, '×').replace(/\\cdot/g, '·')
+                 .replace(/\\rightarrow/g, '→').replace(/\\div/g, '÷')
+                 .replace(/\\pm/g, '±');
+
+            // Pecahan, diulang agar pecahan sederhana yang bertumpuk tetap terbaca.
+            for (let i = 0; i < 4; i++) {
+                s = s.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g,
+                    '<span class="math-frac"><span>$1</span><span>$2</span></span>');
+            }
+
+            // Pangkat dengan kurung: a^{n}, a^{-5}, a^{m+n}, dll.
+            for (let i = 0; i < 5; i++) {
+                s = s.replace(/([A-Za-z0-9\)\]\}])\^\{([^{}]+)\}/g, '$1<sup>$2</sup>');
+            }
+            s = s.replace(/([A-Za-z0-9\)\]])\^(-?\d+)/g, '$1<sup>$2</sup>');
+
+            // Jangan biarkan perintah LaTeX tersisa di layar.
+            s = s.replace(/\\[a-zA-Z]+/g, '');
+            s = s.replace(/[{}]/g, '');
+            s = s.replace(/\\/g, '');
+            s = s.replace(/\b\b/gi, '');
+            return s;
+        }
+
+        function renderMath(tex, target) {
+            const el = typeof target === 'string' ? document.getElementById(target) : target;
+            if (!el) return;
+            // Sengaja memakai renderer HTML aman untuk memastikan tidak ada kode LaTeX mentah
+            // yang bisa terlihat ketika CDN KaTeX gagal dimuat/offline.
+            el.classList.add('formula-readable');
+            el.innerHTML = texToReadableHTML(tex);
+        }
+
+        function renderAllMath(root = document.body) {
+            if (!root) return;
+            // Static formulas use HTML sup/fraction markup; dynamically generated formulas use renderMath().
+        }
+
+        // Tab Switcher Handler
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('active');
+
+            if (tabId === 'tab-tear') updatePaperTear(currentTearN);
+            if (tabId === 'tab-zero-neg') updateTabZeroNeg();
+            if (tabId === 'tab-properties') updateTab3Properties();
+            renderAllMath(document.getElementById(tabId));
+        }
+
+        // ====================================================================
+        // TAB 1: DYNAMIC BASE PAPER TEAR SIMULATION
+        // ====================================================================
+        function initTearChart() {
+            renderTearGraph(currentTearBase, currentTearN);
+        }
+
+        function renderTearGraph(a, activeN) {
+            const host = document.getElementById('tearGraph');
+            if (!host) return;
+            const maxN = a >= 4 ? 4 : 5;
+            const values = Array.from({length:maxN+1}, (_,i)=>Math.pow(a,i));
+            const W=820,H=285,left=58,right=24,top=18,bottom=42;
+            const plotW=W-left-right, plotH=H-top-bottom;
+            const maxVal = Math.max(...values,1);
+            const yMax = maxVal * 1.12;
+            const x = i => left + (i/maxN)*plotW;
+            const y = v => top + plotH - (v/yMax)*plotH;
+            const pts = values.map((v,i)=>[x(i),y(v)]);
+            const line = pts.map(([px,py],i)=>(i?'L':'M')+px.toFixed(1)+' '+py.toFixed(1)).join(' ');
+            const area = line + ` L ${x(maxN).toFixed(1)} ${(top+plotH).toFixed(1)} L ${x(0).toFixed(1)} ${(top+plotH).toFixed(1)} Z`;
+            const gridParts=[];
+            for(let i=0;i<=4;i++){
+                const gy=top+(plotH/4)*i;
+                const val=Math.round(yMax-(yMax/4)*i);
+                gridParts.push(`<line class="graph-grid" x1="${left}" y1="${gy}" x2="${left+plotW}" y2="${gy}"/>`);
+                gridParts.push(`<text class="graph-value" x="${left-9}" y="${gy+4}" text-anchor="end">${val}</text>`);
+            }
+            const xLabels=values.map((_,i)=>`<text class="graph-label" x="${x(i)}" y="${H-16}" text-anchor="middle">n = ${i}</text>`).join('');
+            const dots=values.map((v,i)=>{
+                const r=i===activeN?7:5;
+                const cls=i===activeN?'graph-point active':'graph-point';
+                return `<circle class="${cls}" cx="${x(i)}" cy="${y(v)}" r="${r}"/><text class="graph-value" x="${x(i)}" y="${Math.max(12,y(v)-11)}" text-anchor="middle">${v}</text>`;
+            }).join('');
+            host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafik jumlah potongan kertas untuk basis ${a}">
+                <text class="graph-title" x="${W/2}" y="13" text-anchor="middle">Pertumbuhan jumlah lembar kertas</text>
+                ${gridParts.join('')}
+                <line class="graph-axis" x1="${left}" y1="${top+plotH}" x2="${left+plotW}" y2="${top+plotH}"/>
+                <line class="graph-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top+plotH}"/>
+                <path class="graph-area" d="${area}"/>
+                <path class="graph-line" d="${line}"/>
+                ${dots}
+                ${xLabels}
+                <text class="graph-label" x="${W-6}" y="${H-16}" text-anchor="end">Pangkat (n)</text>
+                <text class="graph-label" x="14" y="${top+plotH/2}" transform="rotate(-90 14 ${top+plotH/2})" text-anchor="middle">Jumlah lembar</text>
+            </svg>`;
+        }
+
+        function setTearBase(b) {
+            currentTearBase = b;
+
+            // Update Base Selector Buttons UI
+            [2, 3, 4, 5].forEach(val => {
+                const btn = document.getElementById(`btn-base-${val}`);
+                if (val === b) {
+                    btn.className = 'tear-base-btn py-2 px-3 rounded-xl border font-black text-sm transition text-center bg-indigo-600 text-white shadow-sm border-indigo-600';
+                } else {
+                    btn.className = 'tear-base-btn py-2 px-3 rounded-xl border font-black text-sm transition text-center bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200';
+                }
+            });
+
+            // Adjust slider max based on base to prevent DOM overflow
+            const slider = document.getElementById('tear-slider');
+            const maxN = (b >= 4) ? 4 : 5;
+            slider.max = maxN;
+
+            const sliderLabels = document.getElementById('tear-slider-labels');
+            sliderLabels.innerHTML = '';
+            for (let i = 0; i <= maxN; i++) {
+                sliderLabels.innerHTML += `<span>${i}x</span>`;
+            }
+
+            if (currentTearN > maxN) currentTearN = maxN;
+            slider.value = currentTearN;
+
+            updatePaperTear(currentTearN, true);
+        }
+
+        function tearStepNext() {
+            const maxN = (currentTearBase >= 4) ? 4 : 5;
+            if (currentTearN < maxN) {
+                currentTearN++;
+                document.getElementById('tear-slider').value = currentTearN;
+                updatePaperTear(currentTearN, true);
+            }
+        }
+
+        function tearReset() {
+            currentTearN = 0;
+            document.getElementById('tear-slider').value = 0;
+            updatePaperTear(0, false);
+        }
+
+        function createPaperDebrisParticles(stage) {
+            const rect = stage.getBoundingClientRect();
+            for (let i = 0; i < 18; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'paper-debris';
+                
+                const startX = rect.width / 2 + (Math.random() * 80 - 40);
+                const startY = rect.height / 2 + (Math.random() * 50 - 25);
+                
+                particle.style.left = `${startX}px`;
+                particle.style.top = `${startY}px`;
+                
+                const dx = (Math.random() - 0.5) * 180;
+                const dy = (Math.random() - 0.5) * 150 - 20;
+                const rot = (Math.random() - 0.5) * 360;
+                
+                particle.style.setProperty('--dx', `${dx}px`);
+                particle.style.setProperty('--dy', `${dy}px`);
+                particle.style.setProperty('--rot', `${rot}deg`);
+                
+                stage.appendChild(particle);
+                setTimeout(() => particle.remove(), 550);
+            }
+        }
+
+        function updatePaperTear(nVal, triggerAnimation = false) {
+            currentTearN = parseInt(nVal);
+            const a = currentTearBase;
+            const n = currentTearN;
+            const count = Math.pow(a, n);
+            const prevCount = n > 0 ? Math.pow(a, n - 1) : 0;
+
+            document.getElementById('tear-n-val').innerText = `Tahap n = ${n}`;
+            document.getElementById('tear-piece-badge').innerText = `Total: ${count} Potongan Lembar`;
+            document.getElementById('chart-basis-badge').innerText = `Basis a = ${a}`;
+
+            // Hero Banner Description Dynamic Update
+            const heroDesc = document.getElementById('hero-banner-desc');
+            heroDesc.innerHTML = `
+                Pada setiap tahap, <b>1 kertas benar-benar disobek menjadi ${a} bagian</b> sesuai nilai basis.
+                Jumlah potongan kertas bertambah <b>${a} kali lipat</b> dari tahap sebelumnya: 
+                <span id="hero-math-seq" class="font-bold text-yellow-100"></span>.
+            `;
+            renderMath(`${a}^0 \\rightarrow ${a}^1 \\rightarrow ${a}^2 \\rightarrow ${a}^3 \\rightarrow ${a}^n`, 'hero-math-seq');
+
+            const stage = document.getElementById('paper-stage');
+
+            // Animasi dibuat sangat lembut: tidak ada suara, loncatan, putaran,
+            // atau partikel yang mengejutkan. Kertas cukup fade/slide pelan.
+            stage.classList.remove('anim-paper-split');
+            void stage.offsetWidth;
+            stage.classList.add('soft-paper-transition');
+
+            // Render Math Formula Expression
+            let multTex = '';
+            if (n === 0) {
+                multTex = `${a}^0 = 1 \\text{ (lembar utuh)}`;
+            } else {
+                let factors = Array(n).fill(a.toString()).join(' \\times ');
+                multTex = `${a}^{${n}} = \\underbrace{${factors}}_{${n} \\text{ kali}} = ${count}`;
+            }
+            renderMath(multTex, 'tear-math-formula');
+
+            // Verbal Description Narrative
+            const verbalEl = document.getElementById('tear-verbal-desc');
+            if (n === 0) {
+                verbalEl.innerHTML = `<b>Tahap Awal</b> (<span id="verbal-n-zero"></span>): Kertas belum dipotong. Ada <b>1 lembar utuh</b> (<span id="verbal-zero-formula"></span>).`;
+                renderMath(`${n}=0`, 'verbal-n-zero');
+                renderMath(`${a}^{0}=1`, 'verbal-zero-formula');
+            } else {
+                verbalEl.innerHTML = `Setiap <b>1 kertas</b> pada tahap sebelumnya disobek menjadi <b>${a} bagian</b>. Jadi jumlah kertas menjadi <b>${prevCount} × ${a} = ${count} lembar</b> (<span id="verbal-current-formula"></span>).`;
+                renderMath(`${a}^{${n}}=${count}`, 'verbal-current-formula');
+            }
+
+            // ===== Realistic paper tearing scene =====
+            stage.innerHTML = '';
+
+            if (n === 0) {
+                const scene = document.createElement('div');
+                scene.className = 'flex flex-col items-center justify-center gap-3 w-full';
+                scene.innerHTML = `
+                    <span class="home-sticker"><i class="fa-solid fa-file"></i> 1 lembar kertas utuh</span>
+                    <div class="real-paper plain-paper w-44 h-32 sm:w-56 sm:h-40 rounded-lg"></div>
+                    <div class="tear-step-label">Belum disobek → masih <b>1 lembar</b> (${a}<sup>0</sup> = 1)</div>
+                `;
+                stage.appendChild(scene);
+            } else {
+                const scene = document.createElement('div');
+                scene.className = 'flex flex-col items-center gap-3 w-full';
+
+                const top = document.createElement('div');
+                top.className = 'flex flex-wrap items-center justify-center gap-5 w-full';
+
+                const sourceBox = document.createElement('div');
+                sourceBox.className = 'flex flex-col items-center gap-2';
+                const demoPieces = Array.from({length: a}, (_, i) => {
+                    const w = 100 / a;
+                    const gap = a > 2 ? 0.7 : 0;
+                    const clip = i === 0
+                        ? 'polygon(0 0,100% 0,98% 14%,100% 29%,97% 44%,100% 61%,98% 78%,100% 100%,0 100%)'
+                        : (i === a - 1
+                            ? 'polygon(0 0,100% 0,100% 100%,0 100%,2% 80%,0 63%,3% 46%,0 28%,2% 13%)'
+                            : 'polygon(1% 0,100% 0,98% 15%,100% 31%,97% 48%,100% 65%,98% 82%,100% 100%,1% 100%,3% 82%,0 65%,3% 48%,0 31%,2% 15%)');
+                    return `<div class="tear-half" style="width:calc(${w}% - ${gap}px); clip-path:${clip};"></div>`;
+                }).join('');
+                const demoSeams = Array.from({length: a - 1}, (_, i) =>
+                    `<div class="tear-seam" style="left:${((i + 1) / a) * 100}%"></div>`
+                ).join('');
+                sourceBox.innerHTML = `<div class="tear-demo ${triggerAnimation ? 'tear-anim' : ''}">
+                    <div class="tear-demo-sheet"></div>
+                    ${demoSeams}
+                    <div class="tear-demo-split">${demoPieces}</div>
+                </div><div class="tear-step-label">Ambil 1 kertas dari <b>${prevCount} lembar</b>, lalu sobek menjadi <b>${a} bagian</b></div>`;
+
+                const arrow = document.createElement('div');
+                arrow.className = 'tear-arrow-soft';
+                arrow.innerHTML = `<span>SOBEK</span><span class="line"></span><span>menjadi ${a} bagian</span>`;
+
+                const resultBox = document.createElement('div');
+                resultBox.className = 'flex flex-col items-center gap-2';
+                const grid = document.createElement('div');
+                grid.className = 'tear-piece-grid';
+                const cols = count <= 4 ? count : count <= 9 ? 4 : count <= 16 ? 5 : 8;
+                grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+                for (let i = 0; i < count; i++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'torn-piece';
+                    if (count > 16) { piece.style.minWidth='30px'; piece.style.minHeight='40px'; }
+                    grid.appendChild(piece);
+                }
+                resultBox.appendChild(grid);
+                const resultLabel = document.createElement('div');
+                resultLabel.className = 'tear-step-label';
+                resultLabel.innerHTML = `<b>${count} lembar</b> setelah semua kertas pada tahap sebelumnya disobek`;
+                resultBox.appendChild(resultLabel);
+
+                top.appendChild(sourceBox);
+                top.appendChild(arrow);
+                top.appendChild(resultBox);
+                scene.appendChild(top);
+
+                const instruction = document.createElement('div');
+                instruction.className = 'tear-instruction w-full max-w-2xl';
+                instruction.innerHTML = `Setiap <b>1 kertas</b> disobek menjadi <b>${a} bagian</b>. Karena sebelumnya ada <b>${prevCount} kertas</b>, hasil akhirnya adalah <b>${prevCount} × ${a} = ${count} kertas</b>.`;
+                scene.appendChild(instruction);
+                stage.appendChild(scene);
+            }
+
+            // Update graph — rendered with SVG so it remains visible even without external chart libraries.
+            renderTearGraph(a, n);
+
+            renderTearLogTable(a, n);
+        }
+
+        function renderTearLogTable(a, activeN) {
+            const tbody = document.getElementById('tear-table-body');
+            tbody.innerHTML = '';
+            const maxN = (a >= 4) ? 4 : 5;
+
+            for (let i = 0; i <= maxN; i++) {
+                const tr = document.createElement('tr');
+                const isCurrent = (i === activeN);
+                tr.className = `border-b border-slate-100 transition ${isCurrent ? 'bg-amber-100/80 font-bold text-amber-950' : 'hover:bg-slate-50'}`;
+
+                let multText = (i === 0) ? '1' : Array(i).fill(a.toString()).join(' × ');
+                const val = Math.pow(a, i);
+
+                tr.innerHTML = `
+                    <td class="p-2 font-semibold">Tahap ke-${i}</td>
+                    <td class="p-2 font-mono text-[11px] text-slate-600">${multText}</td>
+                    <td class="p-2 font-bold text-indigo-600">${a}<sup>${i}</sup></td>
+                    <td class="p-2 text-right font-bold">${val} lembar</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        // ====================================================================
+        // TAB 2: ZERO & NEGATIVE EXPONENTS LOGIC
+        // ====================================================================
+        function updateTabZeroNeg() {
+            const a = parseInt(document.getElementById('t2-a').value, 10);
+            document.getElementById('t2-a-val').innerText = `a = ${a}`;
+            document.getElementById('legend-a-up').innerText = a;
+            document.getElementById('legend-a-down').innerText = a;
+
+            const zeroExample = document.getElementById('t2-zero-example');
+            if (zeroExample) {
+                zeroExample.innerHTML = `
+                    <div class="worked-label">Contoh dengan basis ${a}</div>
+                    <div class="worked-formula">${a}<sup>0</sup> = ${a} ÷ ${a} = <strong>1</strong></div>
+                `;
+            }
+
+            const flow = document.getElementById('t2-negative-flow');
+            if (flow) {
+                flow.innerHTML = `
+                    <div class="flow-step"><div class="flow-exp">${a}<sup>0</sup></div><div class="flow-value">= 1</div></div>
+                    <div class="flow-arrow">÷ ${a}</div>
+                    <div class="flow-step negative"><div class="flow-exp">${a}<sup>−1</sup></div><div class="flow-value"><span class="frac"><span>1</span><span>${a}</span></span></div></div>
+                    <div class="flow-arrow">÷ ${a}</div>
+                    <div class="flow-step negative"><div class="flow-exp">${a}<sup>−2</sup></div><div class="flow-value"><span class="frac"><span>1</span><span>${a*a}</span></span></div></div>
+                `;
+            }
+
+            const logicBox = document.getElementById('t2-logic-summary');
+            logicBox.innerHTML = `
+                <div class="logic-title">Kesimpulan</div>
+                <div class="logic-item yellow"><span>${a}<sup>0</sup></span><span>= 1 karena ${a} ÷ ${a} = 1</span></div>
+                <div class="logic-item blue"><span>${a}<sup>−1</sup></span><span>= 1/${a}</span></div>
+                <div class="logic-item blue"><span>${a}<sup>−n</sup></span><span>= 1 ÷ ${a}<sup>n</sup></span></div>
+            `;
+
+            const container = document.getElementById('t2-ladder-container');
+            container.innerHTML = '';
+            for (let p = 8; p >= -5; p--) {
+                const row = document.createElement('div');
+                const isZero = p === 0;
+                const isNeg = p < 0;
+                row.className = `ladder-item ${isZero ? 'ladder-zero' : ''} ${isNeg ? 'ladder-negative' : ''}`;
+
+                const left = document.createElement('div');
+                left.className = 'ladder-power';
+                left.innerHTML = `a<sup>${p}</sup>`.replace('a', String(a));
+
+                const center = document.createElement('div');
+                center.className = 'ladder-result';
+                if (p > 0) {
+                    center.innerHTML = `<span class="equals">=</span> <strong>${Math.pow(a,p)}</strong>`;
+                } else if (p === 0) {
+                    center.innerHTML = `<span class="equals">=</span> <strong>1</strong>`;
+                } else {
+                    const d = Math.pow(a, Math.abs(p));
+                    center.innerHTML = `<span class="equals">=</span> <span class="frac"><span>1</span><span>${d}</span></span>`;
+                }
+
+                const right = document.createElement('div');
+                right.className = 'ladder-step-text';
+                if (p === 8) {
+                    right.innerHTML = `<span class="start-tag">MULAI</span> Nilai awal pangkat 8`;
+                } else if (p > 0) {
+                    right.innerHTML = `<span class="down-tag">÷ ${a}</span> turun 1 tingkat`;
+                } else if (p === 0) {
+                    right.innerHTML = `<span class="zero-tag">PANGKAT 0</span> ${a} ÷ ${a} = 1`;
+                } else if (p === -1) {
+                    right.innerHTML = `<span class="negative-tag">PANGKAT NEGATIF</span> 1 ÷ ${a} = 1/${a}`;
+                } else {
+                    right.innerHTML = `<span class="negative-tag">÷ ${a} lagi</span> hasil sebelumnya dibagi ${a}`;
+                }
+
+                row.append(left, center, right);
+                container.appendChild(row);
+            }
+        }
+
+        // ====================================================================
+        // TAB 3: EXPONENT PROPERTIES LOGIC
+        // ====================================================================
+        function setTab3Prop(prop) {
+            activeTab3Prop = prop;
+            
+            const btnMul = document.getElementById('t3-btn-mul');
+            const btnDiv = document.getElementById('t3-btn-div');
+            const btnPow = document.getElementById('t3-btn-pow');
+
+            const inactiveClass = 'px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 transition flex items-center gap-2';
+            const activeClass = 'px-4 py-2 rounded-xl font-bold text-xs sm:text-sm bg-emerald-600 text-white shadow-sm transition flex items-center gap-2';
+
+            btnMul.className = (prop === 'mul') ? activeClass : inactiveClass;
+            btnDiv.className = (prop === 'div') ? activeClass : inactiveClass;
+            btnPow.className = (prop === 'pow') ? activeClass : inactiveClass;
+
+            updateTab3Properties();
+        }
+
+        function updateTab3Properties() {
+            const a = parseInt(document.getElementById('t3-a').value);
+            const m = parseInt(document.getElementById('t3-m').value);
+            const n = parseInt(document.getElementById('t3-n').value);
+
+            document.getElementById('t3-a-val').innerText = `a = ${a}`;
+            document.getElementById('t3-m-val').innerText = `m = ${m}`;
+            document.getElementById('t3-n-val').innerText = `n = ${n}`;
+
+            const ruleBox = document.getElementById('t3-rule-box');
+            const visualContainer = document.getElementById('t3-visual-container');
+            visualContainer.innerHTML = '';
+
+            if (activeTab3Prop === 'mul') {
+                const resP = m + n;
+                renderMath(`${a}^{${m}} \\cdot ${a}^{${n}} = ${a}^{${m}+${n}} = ${a}^{${resP}}`, 't3-math-formula');
+                ruleBox.innerHTML = `Sifat Perkalian: Jika dua bilangan berpangkat berbasis sama dikalikan, maka <b>pangkatnya dijumlahkan</b>.<div class=\"formula-readable mt-2\">a<sup>m</sup> · a<sup>n</sup> = a<sup>m+n</sup></div>`;
+
+                // Visual Representation
+                const wrap = document.createElement('div');
+                wrap.className = 'flex flex-wrap items-center justify-center gap-2';
+
+                // Group 1
+                const g1 = document.createElement('div');
+                g1.className = 'flex items-center gap-1.5 p-2 bg-indigo-50 border border-indigo-200 rounded-xl';
+                for (let i = 0; i < m; i++) {
+                    const item = document.createElement('span');
+                    item.className = 'w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-sm';
+                    item.innerText = a;
+                    g1.appendChild(item);
+                }
+
+                const sign = document.createElement('span');
+                sign.className = 'text-xl font-bold text-slate-400 px-1';
+                sign.innerText = '×';
+
+                // Group 2
+                const g2 = document.createElement('div');
+                g2.className = 'flex items-center gap-1.5 p-2 bg-purple-50 border border-purple-200 rounded-xl';
+                for (let i = 0; i < n; i++) {
+                    const item = document.createElement('span');
+                    item.className = 'w-8 h-8 rounded-lg bg-purple-600 text-white font-bold text-xs flex items-center justify-center shadow-sm';
+                    item.innerText = a;
+                    g2.appendChild(item);
+                }
+
+                wrap.appendChild(g1);
+                wrap.appendChild(sign);
+                wrap.appendChild(g2);
+
+                const desc = document.createElement('div');
+                desc.className = 'text-xs text-slate-600 font-semibold text-center mt-2';
+                desc.innerHTML = `Gabungan faktor: <b>${m} faktor</b> (${a}) + <b>${n} faktor</b> (${a}) = <b>Total ${resP} faktor</b> (${a}<sup>${resP}</sup>).`;
+
+                visualContainer.appendChild(wrap);
+                visualContainer.appendChild(desc);
+
+            } else if (activeTab3Prop === 'div') {
+                const resP = m - n;
+                renderMath(`\\frac{${a}^{${m}}}{${a}^{${n}}} = ${a}^{${m}-${n}} = ${a}^{${resP}}`, 't3-math-formula');
+                ruleBox.innerHTML = `Sifat Pembagian: Jika dua bilangan berpangkat berbasis sama dibagi, maka <b>pangkatnya dikurangkan</b>.<div class=\"formula-readable mt-2\">a<sup>m</sup> ÷ a<sup>n</sup> = a<sup>m−n</sup></div>`;
+
+                // Fraction Visual Layout
+                const fracBox = document.createElement('div');
+                fracBox.className = 'flex flex-col items-center justify-center space-y-2';
+
+                const cancelCount = Math.min(m, n);
+
+                // Numerator
+                const numRow = document.createElement('div');
+                numRow.className = 'flex items-center gap-1.5 p-2 bg-indigo-50 border border-indigo-200 rounded-xl';
+                for (let i = 0; i < m; i++) {
+                    const item = document.createElement('span');
+                    const isCanceled = i < cancelCount;
+                    item.className = `w-8 h-8 rounded-lg text-white font-bold text-xs flex items-center justify-center shadow-sm transition ${
+                        isCanceled ? 'bg-slate-400 opacity-40 cancel-item' : 'bg-indigo-600'
+                    }`;
+                    item.innerText = a;
+                    numRow.appendChild(item);
+                }
+
+                const divider = document.createElement('div');
+                divider.className = 'w-full h-0.5 bg-slate-300 rounded';
+
+                // Denominator
+                const denRow = document.createElement('div');
+                denRow.className = 'flex items-center gap-1.5 p-2 bg-purple-50 border border-purple-200 rounded-xl';
+                for (let i = 0; i < n; i++) {
+                    const item = document.createElement('span');
+                    const isCanceled = i < cancelCount;
+                    item.className = `w-8 h-8 rounded-lg text-white font-bold text-xs flex items-center justify-center shadow-sm transition ${
+                        isCanceled ? 'bg-slate-400 opacity-40 cancel-item' : 'bg-purple-600'
+                    }`;
+                    item.innerText = a;
+                    denRow.appendChild(item);
+                }
+
+                fracBox.appendChild(numRow);
+                fracBox.appendChild(divider);
+                fracBox.appendChild(denRow);
+
+                const desc = document.createElement('div');
+                desc.className = 'text-xs text-slate-600 font-semibold text-center mt-2';
+                desc.innerHTML = `Pencoretan Eliminasi: <b>${cancelCount} pasang angka ${a}</b> saling membagi. Sisa faktor = <b>${Math.abs(resP)} faktor</b>.`;
+
+                visualContainer.appendChild(fracBox);
+                visualContainer.appendChild(desc);
+
+            } else if (activeTab3Prop === 'pow') {
+                const resP = m * n;
+                renderMath(`(${a}^{${m}})^{${n}} = ${a}^{${m} \\cdot ${n}} = ${a}^{${resP}}`, 't3-math-formula');
+                ruleBox.innerHTML = `Sifat Perpangkatan: Jika bilangan berpangkat dipangkatkan lagi, maka <b>pangkatnya dikalikan</b>.<div class=\"formula-readable mt-2\">(a<sup>m</sup>)<sup>n</sup> = a<sup>m · n</sup></div>`;
+
+                const groupsBox = document.createElement('div');
+                groupsBox.className = 'flex flex-wrap items-center justify-center gap-3';
+
+                for (let j = 0; j < n; j++) {
+                    const g = document.createElement('div');
+                    g.className = 'flex items-center gap-1.5 p-2 bg-indigo-50 border border-indigo-200 rounded-xl relative';
+                    for (let i = 0; i < m; i++) {
+                        const item = document.createElement('span');
+                        item.className = 'w-7 h-7 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-sm';
+                        item.innerText = a;
+                        g.appendChild(item);
+                    }
+                    groupsBox.appendChild(g);
+                }
+
+                const desc = document.createElement('div');
+                desc.className = 'text-xs text-slate-600 font-semibold text-center mt-2';
+                desc.innerHTML = `Pengulangan Kelompok: Terdapat <b>${n} kelompok</b> yang masing-masing berisi <b>${m} faktor ${a}</b>. Total faktor = <b>${resP} faktor</b> (${a}<sup>${resP}</sup>).`;
+
+                visualContainer.appendChild(groupsBox);
+                visualContainer.appendChild(desc);
+            }
+            renderAllMath(document.getElementById('tab-properties'));
+        }
+
+        // Window Onload Initialization
+        window.onload = function() {
+            renderAllMath(document.body);
+            initTearChart();
+            setTearBase(2);
+            updateTabZeroNeg();
+            renderAllMath(document.body);
+        };
+    </script>
+</body>
+</html>
